@@ -36,10 +36,9 @@ exports.handler = function (event, context, callback) {
                 }
             },
             };
-            return AWS_SES.sendEmail(params).promise();
+            return await AWS_SES.sendEmail(params).promise();
         };    
 };
 module.exports = {
-    sendEmail,
-    sendTemplateEmail,
+    sendEmail
   };
