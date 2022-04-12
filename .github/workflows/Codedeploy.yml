@@ -29,6 +29,6 @@ jobs:
       - name: Upload Zip to S3
         run: |
           aws s3 cp ./csye6225-lambda-${{ github.sha}}.zip s3://aws-codedeploy-lambda/
-      # - name: Update Function Code
-      #   run: |
-      #     aws lambda update-function-code --function-name verify_email --s3-bucket ${{ secrets.S3_BUCKETNAME }} --s3-key csye6225-lambda-${{ github.sha}}.zip
+      - name: Update Function Code
+        run: |
+          aws lambda update-function-code --function-name MailingServiceFunction --s3-bucket aws-codedeploy-lambda --s3-key csye6225-lambda-${{ github.sha}}.zip
