@@ -3,42 +3,33 @@ exports.handler = function (event, context, callback) {
     
         var message = event.Records[0].Sns.Message;
         var token = event.Records[0].Sns.Subject;
-        console.log('Message received from SNS:', message);
-        console.log('Message received from SNS:', token);
-        callback(null, "Success");
-        const SES_CONFIG = {
+        AWS.config.update({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-            region: 'us-east-1',
-        };
-
-        const AWS_SES = new AWS.SES(SES_CONFIG);
-
-        let sendEmail = (recipientEmail, name) => {
-            let params = {
-            Source: 'sonali@prod.sonalisingh30.me',
-            Destination: {
-                ToAddresses: [
-                    message
-                ],
-            },
-            ReplyToAddresses: [],
-            Message: {
-                Body: {
+            region: "us-east-1"
+        });
+        sendEmail(message, token, "This is the body of email","sonali@prod.sonalisingh30.me");
+};
+exports.sendEmail = async(to, subject, message, from) => {
+    const params = {
+        Destination: {
+            ToAddresses: [to]
+        },
+        Message: {
+            Body: {
                 Html: {
                     Charset: 'UTF-8',
-                    Data: 'This is the body of my email!',
+                    Data: message
                 },
-                },
-                Subject: {
-                Charset: 'UTF-8',
-                Data: `Hello, ${message}!`,
-                }
             },
-            };
-            return await AWS_SES.sendEmail(params).promise();
-        };    
+            Subject: {
+                Charset: 'UTF-8',
+                Data: subject
+            }
+        },
+        ReturnPath: from ,
+        Source: from 
+    };
+    const ses = new AWS.SES({ apiVersion: '2010-12-01', region: 'us-east-1' });
+    ses.sendEmail(params);
 };
-module.exports = {
-    sendEmail
-  };
