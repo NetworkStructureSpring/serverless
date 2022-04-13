@@ -4,12 +4,12 @@ exports.handler = function (event, context, callback) {
         var message = event.Records[0].Sns.Message;
         var token = event.Records[0].Sns.Subject;
         
-        verifyUser(message);
+        verifyUser(message,token);
 
     
         
 };
-const verifyUser= async(message)=>
+const verifyUser= async(message,token)=>
 {
     AWS.config.update({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -31,11 +31,11 @@ const verifyUser= async(message)=>
     console.log(data.Item)
     if (data.Item != undefined)
     {
-        await sendEmail();
+        await sendEmail(message,token);
     }
 }
 
-const sendEmail= async()=>
+const sendEmail= async(message,token)=>
 {
     AWS.config.update({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
