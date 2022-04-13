@@ -5,9 +5,6 @@ exports.handler = function (event, context, callback) {
         var token = event.Records[0].Sns.Subject;
         
         verifyUser(message,token);
-
-    
-        
 };
 const verifyUser= async(message,token)=>
 {
@@ -29,7 +26,7 @@ const verifyUser= async(message,token)=>
     const data = await ddb.getItem(params).promise();
     console.log("I am here!!")
     console.log(data.Item)
-    if (data.Item != undefined)
+    if (data.Item == undefined)
     {
         await sendEmail(message,token);
     }
@@ -64,4 +61,22 @@ const sendEmail= async(message,token)=>
     };
     var sendPromise = new AWS.SES({ apiVersion: '2010-12-01', region: "us-east-1" });
     await sendPromise.sendEmail(params).promise();
+    await addUserToDynamo(message);
+}
+const addUserToDynamo= async(message)=>
+{
+    AWS.config.update({
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+        region: "us-east-1"
+    });
+    var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10',region: "us-east-1"});
+
+    var params = {
+        TableName: 'UsernameTokenTable',
+        Item: {
+            'Username': {S: message}
+        }
+    }
+    await ddb.putItem(params).promise();
 }
