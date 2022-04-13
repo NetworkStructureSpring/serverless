@@ -29,10 +29,13 @@ const verifyUser= async(message)=>
     const data = await ddb.getItem(params).promise();
     console.log("I am here!!")
     console.log(data.Item)
-    //sendEmail();
+    if (data.Item != undefined)
+    {
+        await sendEmail();
+    }
 }
 
-function sendEmail()
+const sendEmail= async()=>
 {
     AWS.config.update({
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -59,12 +62,6 @@ function sendEmail()
             },
             Source: "sonali@prod.sonalisingh30.me"
     };
-    var sendPromise = new AWS.SES({apiVersion: '2010-12-01', region: "us-east-1"}).sendEmail(params).promise();
-    sendPromise.then(
-    function(data) {
-        console.log(data.MessageId);
-    }).catch(
-        function(err) {
-        console.error(err, err.stack);
-    });
+    var sendPromise = new AWS.SES({ apiVersion: '2010-12-01', region: "us-east-1" });
+    await sendPromise.sendEmail(params).promise();
 }
