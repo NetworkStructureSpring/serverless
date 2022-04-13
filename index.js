@@ -4,32 +4,37 @@ exports.handler = function (event, context, callback) {
         var message = event.Records[0].Sns.Message;
         var token = event.Records[0].Sns.Subject;
         AWS.config.update({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+            accessKeyId: "AKIAVCB6VYVFTNJQIXAI",
+            secretAccessKey: "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",
             region: "us-east-1"
         });
-        sendEmail(message, token, "This is the body of email","sonali@prod.sonalisingh30.me");
-};
-exports.sendEmail = async(to, subject, message, from) => {
-    const params = {
-        Destination: {
-            ToAddresses: [to]
-        },
-        Message: {
-            Body: {
-                Html: {
-                    Charset: 'UTF-8',
-                    Data: message
-                },
+    
+        var params = {
+            Destination: {
+              ToAddresses: [
+                message
+              ]
             },
-            Subject: {
+            Message: {
+              Body: { 
+                Html: {
+                 Charset: "UTF-8",
+                 Data: "Let's verify your email so you can start using other services "+token
+                }
+               },
+               Subject: {
                 Charset: 'UTF-8',
-                Data: subject
-            }
-        },
-        ReturnPath: from ,
-        Source: from 
+                Data: 'Verify Cloud Assignment-9'
+               }
+              },
+            Source: "sonali@prod.sonalisingh30.me"
     };
-    const ses = new AWS.SES({ apiVersion: '2010-12-01', region: 'us-east-1' });
-    ses.sendEmail(params);
+    var sendPromise = new AWS.SES({apiVersion: '2010-12-01', region: "us-east-1"}).sendEmail(params).promise();
+    sendPromise.then(
+      function(data) {
+        console.log(data.MessageId);
+      }).catch(
+        function(err) {
+        console.error(err, err.stack);
+      });
 };
