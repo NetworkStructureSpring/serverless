@@ -4,8 +4,8 @@ exports.handler = function (event, context, callback) {
         var message = event.Records[0].Sns.Message;
         var token = event.Records[0].Sns.Subject;
         AWS.config.update({
-            accessKeyId: "AKIAVCB6VYVFTNJQIXAI",
-            secretAccessKey: "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",
+            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+            secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
             region: "us-east-1"
         });
     
