@@ -27,6 +27,7 @@ const verifyUser= async(message)=>
     };
 
     const data = await ddb.getItem(params).promise();
+    console.log("I am here!!")
     console.log(data.Item)
     //sendEmail();
 }
