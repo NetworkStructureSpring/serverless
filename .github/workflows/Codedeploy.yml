@@ -1,0 +1,34 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Packer_Workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: us-east-1
+
+      - run: |
+          zip -r csye6225-lambda-${{ github.sha}}.zip ./
+
+      - name: Upload Zip to S3
+        run: |
+          aws s3 cp ./csye6225-lambda-${{ github.sha}}.zip s3://aws-codedeploy-lambda/
+      - name: Update Function Code
+        run: |
+          aws lambda update-function-code --function-name MailingServiceFunction --s3-bucket aws-codedeploy-lambda --s3-key csye6225-lambda-${{ github.sha}}.zip
