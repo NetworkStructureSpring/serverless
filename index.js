@@ -12,13 +12,7 @@ exports.handler = function (event, context, callback) {
 };
 const verifyUser= async(message,token)=>
 {
-    // AWS.config.update({
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-    //     region: "us-east-1"
-    // });
     var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10',region: "us-east-1"});
-
     var params = {
     TableName: 'UsernameTokenTable',
     Key: {
@@ -26,10 +20,7 @@ const verifyUser= async(message,token)=>
     },
     ProjectionExpression: 'Username'
     };
-
     const data = await ddb.getItem(params).promise();
-    console.log("I am here!!")
-    console.log(data.Item)
     if (data.Item == undefined)
     {
         await sendEmail(message,token);
@@ -38,11 +29,6 @@ const verifyUser= async(message,token)=>
 
 const sendEmail= async(message,token)=>
 {
-    // AWS.config.update({
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-    //     region: "us-east-1"
-    // });
         var params = {
             Destination: {
             ToAddresses: [
@@ -69,13 +55,7 @@ const sendEmail= async(message,token)=>
 }
 const addUserToDynamo= async(message)=>
 {
-    // AWS.config.update({
-    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-    //     region: "us-east-1"
-    // });
     var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10',region: "us-east-1"});
-
     var params = {
         TableName: 'UsernameTokenTable',
         Item: {
