@@ -1,18 +1,22 @@
 const AWS = require('aws-sdk');
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+    region: "us-east-1"
+});
 exports.handler = function (event, context, callback) {
     
         var message = event.Records[0].Sns.Message;
         var token = event.Records[0].Sns.Subject;
-        
         verifyUser(message,token);
 };
 const verifyUser= async(message,token)=>
 {
-    AWS.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-        region: "us-east-1"
-    });
+    // AWS.config.update({
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+    //     region: "us-east-1"
+    // });
     var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10',region: "us-east-1"});
 
     var params = {
@@ -34,11 +38,11 @@ const verifyUser= async(message,token)=>
 
 const sendEmail= async(message,token)=>
 {
-    AWS.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-        region: "us-east-1"
-    });
+    // AWS.config.update({
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+    //     region: "us-east-1"
+    // });
         var params = {
             Destination: {
             ToAddresses: [
@@ -65,11 +69,11 @@ const sendEmail= async(message,token)=>
 }
 const addUserToDynamo= async(message)=>
 {
-    AWS.config.update({
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
-        region: "us-east-1"
-    });
+    // AWS.config.update({
+    //     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.AWS_ACCESS_KEY_SECRET,
+    //     region: "us-east-1"
+    // });
     var ddb = new AWS.DynamoDB({apiVersion: '2012-08-10',region: "us-east-1"});
 
     var params = {
